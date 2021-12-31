@@ -84,7 +84,7 @@ function detail_page_parse(order) {
     })
 }
 
-async function detail_page_list_parse(detail_page_list) {
+async function detail_page_list_parse(detail_page_list, send_response) {
     send_status('　　' + detail_page_list.length + '件の注文があります．')
 
     order_list = []
@@ -104,8 +104,8 @@ async function detail_page_list_parse(detail_page_list) {
     if (done != detail_page_list.length) {
         log.warn('Lost some detail page(s): expect=' + detail_page_list.length + ', actual=' + done)
     }
-    send_status('　　注文リストの解析を完了しました．')
-    log.trace(order_list)
+    send_status('　　注文リストの解析を完了しました．');
+    send_response(order_list);
 }
 
 function cmd_handle_parse(cmd, send_response) {
@@ -123,13 +123,11 @@ function cmd_handle_parse(cmd, send_response) {
                     log.error(response)
                     return
                 }
-                detail_page_list_parse(response)
+                detail_page_list_parse(response, send_response)
             }
         )
     }
     chrome.tabs.update(tab_id_map['worker'], { url: hist_page_url(cmd['year'], cmd['page']) })
-
-    send_response({ test: 'AA' })
 }
 
 function cmd_handle_port(cmd, send_response) {
@@ -152,14 +150,12 @@ function cmd_handle_close(cmd) {
 }
 
 chrome.runtime.onMessage.addListener(function (cmd, sender, send_response) {
-    log.trace(cmd)
-
     if (cmd['type'] === 'port') {
         cmd_handle_port(cmd, send_response)
     } else if (cmd['type'] === 'parse') {
         cmd_handle_parse(cmd, send_response)
     } else if (cmd['type'] === 'close') {
-        cmd_handle_close(cmd)
+        cmd_handle_close(cmd, send_response)
     } else {
         log.warn({
             msg: 'Unknown cmd type',
@@ -167,4 +163,6 @@ chrome.runtime.onMessage.addListener(function (cmd, sender, send_response) {
         })
         send_response('Unknown cmd type')
     }
+
+    return true // NOTE: enable send_response
 })
