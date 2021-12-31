@@ -17,9 +17,7 @@
     "browser_action": {
         "default_icon": {
             "32": "icon/icon-32.png"
-        },
-        "default_title": "Amazhist Chrome Extension",
-        "default_popup": "popup/popup.htm"
+        }
     },
     "background": {
         "scripts": [
