@@ -29,6 +29,12 @@ function tab_open(type, url, active = true) {
 chrome.browserAction.onClicked.addListener(function () {
     tab_open('ctrl', 'ctrl/index.htm')
     tab_open('worker', 'https://www.amazon.co.jp/', false)
+
+    chrome.tabs.onRemoved.addListener(function(tabid, removed) {
+        if (tabid == tab_id_map['ctrl']) {
+            chrome.tabs.remove(tab_id_map['worker']);
+        }
+    })
 })
 
 function send_status(message) {
@@ -136,26 +142,11 @@ function cmd_handle_port(cmd, send_response) {
     send_response()
 }
 
-function cmd_handle_close(cmd) {
-    if (tab_id_map['worker'] === null) {
-        return
-    }
-    chrome.tabs.get(tab_id_map['worker'], function (tab) {
-        if (typeof tab !== 'undefined') {
-            chrome.tabs.remove(tab_id_map['worker'])
-        }
-        tab_id_map['ctrl'] = null
-        tab_id_map['worker'] = null
-    })
-}
-
 chrome.runtime.onMessage.addListener(function (cmd, sender, send_response) {
     if (cmd['type'] === 'port') {
         cmd_handle_port(cmd, send_response)
     } else if (cmd['type'] === 'parse') {
         cmd_handle_parse(cmd, send_response)
-    } else if (cmd['type'] === 'close') {
-        cmd_handle_close(cmd, send_response)
     } else {
         log.warn({
             msg: 'Unknown cmd type',

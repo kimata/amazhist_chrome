@@ -19,7 +19,3 @@ chrome.runtime.onConnect.addListener(function (port) {
         document.getElementById('log').value += msg
     })
 })
-
-window.onbeforeunload = function (e) {
-    chrome.runtime.sendMessage({ type: 'close' })
-}
