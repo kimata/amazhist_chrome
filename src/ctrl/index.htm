@@ -2,14 +2,36 @@
 <html lang="ja">
     <head>
         <meta charset="utf-8" />
-        <link rel="stylesheet" href="bulma.min.css" />
+        <link rel="stylesheet" href="bootstrap.min.css" />
     </head>
     <body>
-        <h1>Hello</h1>
-        <div>TEST TEST</div>
-        <button id="start">スタート</button>
+        <section class="hero">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">Amazhist Chrome</h1>
+                    <h2 class="subtitle">Amazon の購入履歴を収集する Chrome 拡張</h2>
+                </div>
+            </div>
+        </section>
 
-        <textarea id="log" rows="10" cols="100"></textarea>
+        <section class="section">
+            <div class="container">
+                <button id="start" class="btn btn-primary">スタート</button>
+            </div>
+        </section>
+        <section class="section">
+            <div class="container">
+                <textarea id="log" rows="10" cols="100" class="overflow-auto"></textarea>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <div class="content has-text-centered">
+                <p>amazhist_crome</p>
+            </div>
+        </footer>
+
+        <script src="bootstrap.min.js"></script>
         <script src="ctrl.js"></script>
     </body>
 </html>
