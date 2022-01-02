@@ -55,11 +55,10 @@ function error(message) {
 
 function hist_page_url(year, page) {
     return (
-        'https://www.amazon.co.jp/gp/css/order-history?' +
-        'digitalOrders=1&unifiedOrders=1&orderFilter=year-' +
+        'https://www.amazon.co.jp/gp/your-account/order-history/?orderFilter=year-' +
         year +
         '&startIndex=' +
-        page
+        (page - 1) * 10
     )
 }
 
