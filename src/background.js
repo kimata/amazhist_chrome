@@ -118,6 +118,7 @@ async function detail_page_list_parse(detail_page_list, send_response) {
     }
     send_response({
         list: item_list,
+        order_count: order_count,
         is_last: detail_page_list['is_last']
     })
 }
@@ -148,6 +149,13 @@ function cmd_handle_parse(cmd, send_response) {
         url = hist_page_url(2020, 1) // ダミー
         post_exec = function (response) {
             send_status('　　' + response['list'].length + '年分の注文リストが見つかりました．')
+            send_response(response)
+        }
+    } else if (cmd['target'] === 'order_count') {
+        message = cmd['year'] + '年の注文件数を解析します．'
+        url = hist_page_url(cmd['year'], 1)
+        post_exec = function (response) {
+            send_status('　　' + response['count'] + '件の注文が見つかりました．')
             send_response(response)
         }
     } else if (cmd['target'] === 'list') {

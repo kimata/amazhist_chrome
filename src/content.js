@@ -46,10 +46,10 @@ function year_list_page_parse() {
 
 function order_count_page_parse() {
     const order_count_text = document
-        .xpath('//label[@for="orderFilter")]/span[contains(@class, "num-orders")]')
+        .xpath('//label[@for="orderFilter"]//span[contains(@class, "num-orders")]')[0]
         .innerText.trim()
 
-    const order_count = parseInt(year_text.replace('件', ''))
+    const order_count = parseInt(order_count_text.replace('件', ''))
 
     return {
         count: order_count

@@ -1,11 +1,19 @@
 var year_list = []
 var year_done = 0
 var item_list = []
+var order_info = {
+    total: 0,
+    done: 0
+}
 
 function iniit_status() {
     year_list = []
     year_done = 0
     item_list = []
+    order_info = {
+        total: 0,
+        done: 0
+    }
 
     document.getElementById('log').value = ''
     document.getElementById('item_count').innerText = item_list.length.toLocaleString()
@@ -37,28 +45,6 @@ document.getElementById('save').onclick = function () {
     write(item_list)
 }
 
-function get_item_in_year(year, page, callback) {
-    chrome.runtime.sendMessage(
-        {
-            type: 'parse',
-            target: 'list',
-            year: year,
-            page: page
-        },
-        function (response) {
-            for (item of response['list']) {
-                item_list.push(item)
-            }
-            document.getElementById('item_count').innerText = item_list.length.toLocaleString()
-            if (response['is_last']) {
-                callback()
-            } else {
-                get_item_in_year(year, page + 1, callback)
-            }
-        }
-    )
-}
-
 function year_loop(year_list, index, func, next) {
     return new Promise(function (resolve, reject) {
         if (index == year_list.length) {
@@ -76,6 +62,44 @@ function year_loop(year_list, index, func, next) {
     })
 }
 
+function get_item_in_year(year, page, callback) {
+    chrome.runtime.sendMessage(
+        {
+            type: 'parse',
+            target: 'list',
+            year: year,
+            page: page
+        },
+        function (response) {
+            for (item of response['list']) {
+                item_list.push(item)
+            }
+            order_info['done'] += response['order_count']
+
+            document.getElementById('item_count').innerText = item_list.length.toLocaleString()
+            if (response['is_last']) {
+                callback()
+            } else {
+                get_item_in_year(year, page + 1, callback)
+            }
+        }
+    )
+}
+
+function get_order_count_in_year(year, callback) {
+    chrome.runtime.sendMessage(
+        {
+            type: 'parse',
+            target: 'order_count',
+            year: year
+        },
+        function (response) {
+            order_info['total'] += response['count']
+            callback()
+        }
+    )
+}
+
 async function get_year_list() {
     new Promise((resolve) => {
         chrome.runtime.sendMessage(
@@ -88,6 +112,7 @@ async function get_year_list() {
             }
         )
     })
+
         .then((year_list) => {
             return new Promise(function (resolve) {
                 year_list = [2001, 2002] // For DEBUG
@@ -95,7 +120,7 @@ async function get_year_list() {
                     year_list,
                     0,
                     function (year, callback) {
-                        get_item_in_year(year, 1, callback)
+                        get_order_count_in_year(year, callback)
                     },
                     resolve
                 )
