@@ -113,14 +113,13 @@ async function detail_page_list_parse(detail_page_list, send_response) {
     }
     send_status('　　注文リストの解析を完了しました．')
 
+    if (detail_page_list['is_last']) {
+        send_status(detail_page_list['year'] + '年の注文の解析を完了しました．')
+    }
     send_response({
         list: item_list,
         is_last: detail_page_list['is_last']
     })
-
-    if (detail_page_list['is_last']) {
-        send_status(detail_page_list['year'] + '年の注文の解析を完了しました．')
-    }
 }
 
 function cmd_request_parse(cmd, url, message, post_exec) {
