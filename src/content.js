@@ -44,6 +44,18 @@ function year_list_page_parse() {
     }
 }
 
+function order_count_page_parse() {
+    const order_count_text = document
+        .xpath('//label[@for="orderFilter")]/span[contains(@class, "num-orders")]')
+        .innerText.trim()
+
+    const order_count = parseInt(year_text.replace('件', ''))
+
+    return {
+        count: order_count
+    }
+}
+
 function order_list_page_parse() {
     const order_count = document.xpath('count(//div[contains(@class, " order ")])')
     log.info({ order_count: order_count })
@@ -188,12 +200,12 @@ function order_detail_page_parse() {
     }
 }
 
-window.onload = function () {}
-
-chrome.runtime.onMessage.addListener(function (cmd, sender, send_response) {
+function cmd_handler(cmd, sender, send_response) {
     if (cmd['type'] === 'parse') {
         if (cmd['target'] === 'year_list') {
             send_response(year_list_page_parse())
+        } else if (cmd['target'] === 'order_count') {
+            send_response(order_count_page_parse())
         } else if (cmd['target'] === 'list') {
             send_response(order_list_page_parse())
         } else if (cmd['target'] === 'detail') {
