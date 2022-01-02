@@ -83,6 +83,9 @@ function detail_page_parse(order) {
         order['url'],
         '',
         function (response) {
+            for (item of response) {
+                item['date'] = order['date']
+            }
             return response
         }
     )
