@@ -8,29 +8,7 @@ function iniit_status() {
     item_list = []
 
     document.getElementById('log').value = ''
-    document.getElementById('item_count').innerText = item_list.length.toLocaleString();
-}
-
-function get_item_in_year(year, page, callback) {
-    chrome.runtime.sendMessage(
-        {
-            type: 'parse',
-            target: 'list',
-            year: year,
-            page: page
-        },
-        function (response) {
-            for (item of response['list']) {
-                item_list.push(item)
-            }
-            document.getElementById('item_count').innerText = item_list.length.toLocaleString();
-            if (response['is_last']) {
-                callback()
-            } else {
-                get_item_in_year(year, page + 1, callback)
-            }
-        }
-    )
+    document.getElementById('item_count').innerText = item_list.length.toLocaleString()
 }
 
 function getNewFileHandle() {
@@ -57,6 +35,28 @@ async function write(data) {
 
 document.getElementById('save').onclick = function () {
     write(item_list)
+}
+
+function get_item_in_year(year, page, callback) {
+    chrome.runtime.sendMessage(
+        {
+            type: 'parse',
+            target: 'list',
+            year: year,
+            page: page
+        },
+        function (response) {
+            for (item of response['list']) {
+                item_list.push(item)
+            }
+            document.getElementById('item_count').innerText = item_list.length.toLocaleString()
+            if (response['is_last']) {
+                callback()
+            } else {
+                get_item_in_year(year, page + 1, callback)
+            }
+        }
+    )
 }
 
 document.getElementById('start').onclick = function () {
