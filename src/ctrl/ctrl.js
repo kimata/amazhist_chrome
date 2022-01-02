@@ -16,6 +16,8 @@ document.getElementById('start').onclick = function () {
 
 chrome.runtime.onConnect.addListener(function (port) {
     port.onMessage.addListener(function (msg) {
-        document.getElementById('log').value += msg
+        var textarea = document.getElementById('log')
+        textarea.value += msg
+        textarea.scrollTop = textarea.scrollHeight
     })
 })
