@@ -61,8 +61,8 @@ document.getElementById('save').onclick = function () {
 
 document.getElementById('start').onclick = function () {
     document.getElementById('start').disabled = true
+    iniit_status()
 
-    item_list = []
     chrome.runtime.sendMessage({ type: 'port' }, function () {
         get_item_in_year(2001, 1, function () {
             console.log(JSON.stringify(item_list))
