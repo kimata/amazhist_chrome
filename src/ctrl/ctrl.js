@@ -6,7 +6,7 @@ var order_info = {
     done: 0
 }
 
-function iniit_status() {
+function init_status() {
     year_list = []
     year_done = 0
     item_list = []
@@ -112,28 +112,46 @@ async function get_year_list() {
             }
         )
     })
-
         .then((year_list) => {
+            year_list = [2001, 2002] // For DEBUG
             return new Promise(function (resolve) {
-                year_list = [2001, 2002] // For DEBUG
                 year_loop(
                     year_list,
                     0,
                     function (year, callback) {
                         get_order_count_in_year(year, callback)
                     },
-                    resolve
+                    function () {
+                        resolve(year_list)
+                    }
                 )
             })
         })
         .then((year_list) => {
-            log_append('FINISH')
+            return new Promise(function (resolve) {
+                year_loop(
+                    year_list,
+                    0,
+                    function (year, callback) {
+                        get_item_in_year(year, 1, callback)
+                    },
+                    resolve
+                )
+            })
+        })
+        .then(() => {
+            log_append('完了しました．')
+
+            order_info['total'] = order_info['done']
+            notify_progress()
+
+            document.getElementById('start').disabled = false
         })
 }
 
 document.getElementById('start').onclick = function () {
     document.getElementById('start').disabled = true
-    iniit_status()
+    init_status()
 
     chrome.runtime.sendMessage({ type: 'port' }, function () {
         get_year_list()
