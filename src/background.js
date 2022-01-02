@@ -96,20 +96,19 @@ async function detail_page_list_parse(detail_page_list, send_response) {
 
     item_list = []
 
-    var done = 0
+    var order_count = 0
     for (detail_page of detail_page_list['list']) {
         for (item of await detail_page_parse(detail_page)) {
             item_list.push(item)
         }
-        done++
-        send_status('　　　　' + done + '件目の注文を解析しました．')
+        order_count++
+        send_status('　　　　' + order_count + '件目の注文を解析しました．')
 
         await sleep(2)
-        break
     }
 
-    if (done != detail_page_list.length) {
-        log.warn('Lost some detail page(s): expect=' + detail_page_list.length + ', actual=' + done)
+    if (order_count != detail_page_list.length) {
+        log.warn('Lost some detail page(s): expect=' + detail_page_list.length + ', actual=' + order_count)
     }
     send_status('　　注文リストの解析を完了しました．')
 
