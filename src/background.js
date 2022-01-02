@@ -136,8 +136,15 @@ function cmd_request_parse(cmd, url, message, post_exec) {
     })
 }
 
-async function cmd_handle_parse(cmd, send_response) {
-    if (cmd['target'] === 'list') {
+function cmd_handle_parse(cmd, send_response) {
+    if (cmd['target'] === 'year_list') {
+        message = '注文がある年を解析します．'
+        url = hist_page_url(2020, 1) // ダミー
+        post_exec = function (response) {
+            send_status('　　' + response['list'].length + '年分の注文リストが見つかりました．')
+            send_response(response)
+        }
+    } else if (cmd['target'] === 'list') {
         message = '注文リストを解析します．(' + cmd['year'] + '年, page ' + cmd['page'] + ')'
         url = hist_page_url(cmd['year'], cmd['page'])
         post_exec = function (response) {
@@ -148,7 +155,7 @@ async function cmd_handle_parse(cmd, send_response) {
         return
     }
 
-    await cmd_request_parse(cmd, url, message, post_exec)
+    cmd_request_parse(cmd, url, message, post_exec)
 }
 
 function cmd_handle_port(cmd, send_response) {

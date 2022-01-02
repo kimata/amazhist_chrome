@@ -20,6 +20,30 @@ document.xpath = function (expression) {
     }
 }
 
+function year_list_page_parse() {
+    year_list = []
+
+    const year_count = document.xpath(
+        'count(//span[contains(@class, "a-dropdown-container")]//option[contains(@id, "orderFilterEntry-year")])'
+    )
+
+    for (var i = 0; i < year_count; i++) {
+        const year_text = document
+            .xpath(
+                '//span[contains(@class, "a-dropdown-container")]//option[contains(@id, "orderFilterEntry-year")][' +
+                    (i + 1) +
+                    ']'
+            )[0]
+            .innerText.trim()
+
+        year_list.push(parseInt(year_text.replace('年', '')))
+    }
+
+    return {
+        list: year_list
+    }
+}
+
 function order_list_page_parse() {
     const order_count = document.xpath('count(//div[contains(@class, " order ")])')
     log.info({ order_count: order_count })
@@ -69,20 +93,20 @@ function order_item_page_parse(parent_xpath) {
     const img_url = document.xpath(parent_xpath + '//div[contains(@class, "item-view-left-col-inner")]//img')[0]
         .currentSrc
 
-    const count_num = document.xpath(
+    const quantity_count = document.xpath(
         parent_xpath + '//div[contains(@class, "item-view-left-col-inner")]//span[contains(@class, "item-view-qty")]'
     )[0]
 
-    var count = 1
-    if (count_num != undefined) {
-        count = parseInt(count_num.innerText, 10)
+    var quantity = 1
+    if (quantity_count != undefined) {
+        quantity = parseInt(quantity_count.innerText, 10)
     }
 
     return {
         name: name,
         url: url,
         asin: asin,
-        count: count,
+        quantity: quantity,
         price: price,
         seller: seller,
         img_url
@@ -171,7 +195,9 @@ chrome.runtime.onMessage.addListener(function (cmd, sender, send_response) {
     log.trace(cmd)
 
     if (cmd['type'] === 'parse') {
-        if (cmd['target'] === 'list') {
+        if (cmd['target'] === 'year_list') {
+            send_response(year_list_page_parse())
+        } else if (cmd['target'] === 'list') {
             send_response(order_list_page_parse())
         } else if (cmd['target'] === 'detail') {
             send_response(order_detail_page_parse())
