@@ -30,15 +30,23 @@ chrome.browserAction.onClicked.addListener(function () {
     tab_open('ctrl', 'ctrl/index.htm')
     tab_open('worker', 'https://www.amazon.co.jp/', false)
 
-    chrome.tabs.onRemoved.addListener(function(tabid, removed) {
+    chrome.tabs.onRemoved.addListener(function (tabid, removed) {
         if (tabid == tab_id_map['ctrl']) {
-            chrome.tabs.remove(tab_id_map['worker']);
+            chrome.tabs.remove(tab_id_map['worker'])
         }
     })
 })
 
 function send_status(message) {
     port_to_ctrl.postMessage(message + '\n')
+}
+
+function error(message) {
+    send_status('エラーが発生しました．')
+    send_status(message)
+
+    log.error('エラーが発生しました．')
+    log.trace(message)
 }
 
 function hist_page_url(year, page) {
@@ -68,35 +76,26 @@ function sleep(sec) {
 }
 
 function detail_page_parse(order) {
-    return new Promise(function (resolve, reject) {
-        event_map['onload'] = function () {
-            chrome.tabs.sendMessage(
-                tab_id_map['worker'],
-                {
-                    type: 'parse',
-                    target: 'detail'
-                },
-                function (response) {
-                    event_map['onload'] = null
-                    if (typeof response === 'string') {
-                        log.error(response)
-                        reject()
-                    }
-                    resolve(response)
-                }
-            )
+    return cmd_request_parse(
+        {
+            type: 'parse',
+            target: 'detail'
+        },
+        order['url'],
+        '',
+        function (response) {
+            return response
         }
-        chrome.tabs.update(tab_id_map['worker'], { url: order['url'] })
-    })
+    )
 }
 
 async function detail_page_list_parse(detail_page_list, send_response) {
-    send_status('　　' + detail_page_list.length + '件の注文があります．')
+    send_status('　　' + detail_page_list['list'].length + '件の注文があります．')
 
     order_list = []
 
     var done = 0
-    for (detail_page of detail_page_list) {
+    for (detail_page of detail_page_list['list']) {
         for (order of await detail_page_parse(detail_page)) {
             order_list.push(order)
         }
@@ -110,30 +109,46 @@ async function detail_page_list_parse(detail_page_list, send_response) {
     if (done != detail_page_list.length) {
         log.warn('Lost some detail page(s): expect=' + detail_page_list.length + ', actual=' + done)
     }
-    send_status('　　注文リストの解析を完了しました．');
-    send_response(order_list);
+    send_status('　　注文リストの解析を完了しました．')
+    send_response({
+        list: order_list,
+        is_last: detail_page_list['is_last']
+    })
 }
 
-function cmd_handle_parse(cmd, send_response) {
-    send_status('注文リストを解析します．(' + cmd['year'] + '年, page ' + cmd['page'] + ')')
-    event_map['onload'] = function () {
-        chrome.tabs.sendMessage(
-            tab_id_map['worker'],
-            {
-                type: 'parse',
-                target: 'list'
-            },
-            function (response) {
+function cmd_request_parse(cmd, url, message, post_exec) {
+    if (message !== '') {
+        send_status(message)
+    }
+
+    return new Promise(function (resolve, reject) {
+        event_map['onload'] = function () {
+            chrome.tabs.sendMessage(tab_id_map['worker'], cmd, function (response) {
                 event_map['onload'] = null
                 if (typeof response === 'string') {
-                    log.error(response)
-                    return
+                    error(response)
+                    reject()
                 }
-                detail_page_list_parse(response, send_response)
-            }
-        )
+                resolve(post_exec(response))
+            })
+        }
+        chrome.tabs.update(tab_id_map['worker'], { url: url })
+    })
+}
+
+async function cmd_handle_parse(cmd, send_response) {
+    if (cmd['target'] === 'list') {
+        message = '注文リストを解析します．(' + cmd['year'] + '年, page ' + cmd['page'] + ')'
+        url = hist_page_url(cmd['year'], cmd['page'])
+        post_exec = function (response) {
+            detail_page_list_parse(response, send_response)
+        }
+    } else {
+        error('未知のコマンドです．')
+        return
     }
-    chrome.tabs.update(tab_id_map['worker'], { url: hist_page_url(cmd['year'], cmd['page']) })
+
+    await cmd_request_parse(cmd, url, message, post_exec)
 }
 
 function cmd_handle_port(cmd, send_response) {

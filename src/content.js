@@ -37,7 +37,13 @@ function order_list_page_parse() {
             url: url
         })
     }
-    return detail_page_list
+    const is_last =
+        document.xpath('count(//ul[contains(@class, "a-pagination")]/li[contains(@class, "a-last")]/a)') == 0
+
+    return {
+        list: detail_page_list,
+        is_last: is_last
+    }
 }
 
 function order_item_page_parse(parent_xpath) {
