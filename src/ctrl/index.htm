@@ -2,34 +2,45 @@
 <html lang="ja">
     <head>
         <meta charset="utf-8" />
+
         <link rel="stylesheet" href="bootstrap.min.css" />
+        <link rel="stylesheet" href="ctrl.css" />
     </head>
     <body>
-        <section class="hero">
-            <div class="hero-body">
-                <div class="container">
-                    <h1 class="title">Amazhist Chrome</h1>
-                    <h2 class="subtitle">Amazon の購入履歴を収集する Chrome 拡張</h2>
-                </div>
-            </div>
-        </section>
-
-        <section class="section">
+        <div class="jumbotron">
             <div class="container">
-                <button id="start" class="btn btn-primary">スタート</button>
+                <h1 class="display-3">Amazhist Chrome</h1>
+                <p class="lead">Amazon の購入履歴を収集する Chrome 拡張</p>
             </div>
-        </section>
-        <section class="section">
-            <div class="container">
-                <textarea id="log" rows="10" cols="100" class="overflow-auto"></textarea>
-            </div>
-        </section>
+        </div>
 
-        <footer class="footer">
-            <div class="content has-text-centered">
-                <p>amazhist_crome</p>
+        <div class="container mt-2">
+            <h2>履歴データ収集</h2>
+            <p class="lead">Amazon.co.jp にログインした状態でボタンを押すと購入履歴の収集が始まります．</p>
+            <button id="start" class="btn btn-primary">スタート</button>
+        </div>
+
+        <div class="container mt-5">
+            <h2>ステータス</h2>
+
+            <div class="progress" style="height: 20px">
+                <div
+                    class="progress-bar"
+                    role="progressbar"
+                    aria-valuenow="25"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                ></div>
             </div>
-        </footer>
+
+            <textarea id="log" rows="10" cols="100" class="overflow-auto mt-3"></textarea>
+        </div>
+
+        <div class="container mt-5">
+            <h2>履歴データ保存</h2>
+            <p class="lead">収集した履歴データを JSON 形式で保存します．</p>
+            <button id="save" class="btn btn-primary">保存</button>
+        </div>
 
         <script src="bootstrap.min.js"></script>
         <script src="ctrl.js"></script>
