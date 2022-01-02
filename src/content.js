@@ -212,5 +212,8 @@ chrome.runtime.onMessage.addListener(function (cmd, sender, send_response) {
         })
         send_response('ERROR: Unknown cmd type')
     }
+    chrome.extension.onRequest.removeListener(cmd_handelr)
     return true
-})
+}
+
+chrome.runtime.onMessage.addListener(cmd_handler)
