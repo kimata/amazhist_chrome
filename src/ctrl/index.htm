@@ -23,9 +23,16 @@
         <div class="container mt-5">
             <h2>ステータス</h2>
 
-            <div>
-                <span id="order_count_done" class="display-3">0</span> /
-                <span id="order_count_total">0</span>件の履歴データを収集しました．
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        処理済み注文:
+                        <span id="order_count_done" class="display-3">0</span> / <span id="order_count_total">0</span>件
+                    </div>
+                    <div class="col">
+                        <div class="float-end">合計<span id="order_price_total" class="display-3">0</span>円</div>
+                    </div>
+                </div>
             </div>
             <div class="progress" style="height: 20px">
                 <div
@@ -37,6 +44,13 @@
                     id="progress_bar"
                 >
                     0%
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div class="float-end">予想残り時間: <span id="remaining_time">?</span></div>
+                    </div>
                 </div>
             </div>
 
