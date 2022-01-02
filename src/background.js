@@ -109,10 +109,15 @@ async function detail_page_list_parse(detail_page_list, send_response) {
         log.warn('Lost some detail page(s): expect=' + detail_page_list.length + ', actual=' + done)
     }
     send_status('　　注文リストの解析を完了しました．')
+
     send_response({
         list: order_list,
         is_last: detail_page_list['is_last']
     })
+
+    if (detail_page_list['is_last']) {
+        send_status(detail_page_list['year'] + '年の注文の解析を完了しました．')
+    }
 }
 
 function cmd_request_parse(cmd, url, message, post_exec) {
@@ -147,6 +152,7 @@ function cmd_handle_parse(cmd, send_response) {
         message = '注文リストを解析します．(' + cmd['year'] + '年, page ' + cmd['page'] + ')'
         url = hist_page_url(cmd['year'], cmd['page'])
         post_exec = function (response) {
+            response['year'] = cmd['year']
             detail_page_list_parse(response, send_response)
         }
     } else {
