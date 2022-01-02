@@ -1,4 +1,15 @@
+var year_list = []
+var year_done = 0
 var item_list = []
+
+function iniit_status() {
+    year_list = []
+    year_done = 0
+    item_list = []
+
+    document.getElementById('log').value = ''
+    document.getElementById('item_count').innerText = item_list.length.toLocaleString();
+}
 
 function get_item_in_year(year, page, callback) {
     chrome.runtime.sendMessage(
@@ -12,7 +23,7 @@ function get_item_in_year(year, page, callback) {
             for (item of response['list']) {
                 item_list.push(item)
             }
-
+            document.getElementById('item_count').innerText = item_list.length.toLocaleString();
             if (response['is_last']) {
                 callback()
             } else {
