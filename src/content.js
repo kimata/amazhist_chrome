@@ -141,8 +141,6 @@ function order_detail_page_parse_normal() {
                 (j + 1) +
                 ']'
             item = order_item_page_parse(parent_xpath)
-            log.info({ item: item })
-
             item_list.push(item)
         }
     }
@@ -193,8 +191,6 @@ function order_detail_page_parse() {
 window.onload = function () {}
 
 chrome.runtime.onMessage.addListener(function (cmd, sender, send_response) {
-    log.trace(cmd)
-
     if (cmd['type'] === 'parse') {
         if (cmd['target'] === 'year_list') {
             send_response(year_list_page_parse())
