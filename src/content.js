@@ -82,7 +82,7 @@ function order_item_page_parse(parent_xpath) {
     const price_str = document.xpath(
         parent_xpath + '//div[contains(@class, "a-row")]/span[contains(@class, "a-color-price")]'
     )[0].innerText
-    const price = parseInt(price_str.replace(',', '').match(new RegExp('[\\d,]+'))[0], 10)
+    var price = parseInt(price_str.replace(',', '').match(new RegExp('[\\d,]+'))[0], 10)
 
     const seller_str = document.xpath(
         parent_xpath +
@@ -100,6 +100,7 @@ function order_item_page_parse(parent_xpath) {
     var quantity = 1
     if (quantity_count != undefined) {
         quantity = parseInt(quantity_count.innerText, 10)
+        price *= quantity
     }
 
     return {
