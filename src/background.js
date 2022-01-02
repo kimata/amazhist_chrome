@@ -7,6 +7,10 @@ var tab_id_map = {
     worker: null
 }
 
+var event_map = {
+    onload: null
+}
+
 function tab_open_impl(type, url, active = true) {
     chrome.tabs.create({ url: url, active: active }, function (tab) {
         tab_id_map[type] = tab.id
@@ -57,10 +61,6 @@ function hist_page_url(year, page) {
         '&startIndex=' +
         page
     )
-}
-
-event_map = {
-    onload: null
 }
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
