@@ -16,7 +16,18 @@ function init_status() {
     }
 
     document.getElementById('log').value = ''
-    document.getElementById('item_count').innerText = item_list.length.toLocaleString()
+    notify_progress()
+}
+
+function notify_progress() {
+    document.getElementById('order_count_done').innerText = order_info['done'].toLocaleString()
+    document.getElementById('order_count_total').innerText = order_info['total'].toLocaleString()
+
+    rate = Math.round((100 * order_info['done']) / order_info['total']) + '%'
+
+    progress_bar = document.getElementById('progress_bar')
+    progress_bar.innerText = rate
+    progress_bar.style.width = rate
 }
 
 function getNewFileHandle() {
@@ -75,8 +86,8 @@ function get_item_in_year(year, page, callback) {
                 item_list.push(item)
             }
             order_info['done'] += response['order_count']
+            notify_progress()
 
-            document.getElementById('item_count').innerText = item_list.length.toLocaleString()
             if (response['is_last']) {
                 callback()
             } else {
@@ -95,6 +106,7 @@ function get_order_count_in_year(year, callback) {
         },
         function (response) {
             order_info['total'] += response['count']
+            notify_progress()
             callback()
         }
     )
