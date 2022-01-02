@@ -158,7 +158,7 @@ function cmd_handle_parse(cmd, send_response) {
             send_response(response)
         }
     } else if (cmd['target'] === 'list') {
-        message = '注文リストを解析します．(' + cmd['year'] + '年, page ' + cmd['page'] + ')'
+        message = cmd['year'] + '年の注文リストを解析します．(p. ' + cmd['page'] + ')'
         url = hist_page_url(cmd['year'], cmd['page'])
         post_exec = function (response) {
             response['year'] = cmd['year']
