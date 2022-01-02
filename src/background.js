@@ -94,12 +94,12 @@ function detail_page_parse(order) {
 async function detail_page_list_parse(detail_page_list, send_response) {
     send_status('　　' + detail_page_list['list'].length + '件の注文があります．')
 
-    order_list = []
+    item_list = []
 
     var done = 0
     for (detail_page of detail_page_list['list']) {
-        for (order of await detail_page_parse(detail_page)) {
-            order_list.push(order)
+        for (item of await detail_page_parse(detail_page)) {
+            item_list.push(item)
         }
         done++
         send_status('　　　　' + done + '件目の注文を解析しました．')
@@ -114,7 +114,7 @@ async function detail_page_list_parse(detail_page_list, send_response) {
     send_status('　　注文リストの解析を完了しました．')
 
     send_response({
-        list: order_list,
+        list: item_list,
         is_last: detail_page_list['is_last']
     })
 
