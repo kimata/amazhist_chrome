@@ -59,14 +59,59 @@ function get_item_in_year(year, page, callback) {
     )
 }
 
+function year_loop(year_list, index, func, next) {
+    return new Promise(function (resolve, reject) {
+        if (index == year_list.length) {
+            return resolve(false)
+        }
+        func(year_list[index], function () {
+            return resolve(true)
+        })
+    }).then(function (is_continue) {
+        if (is_continue) {
+            return year_loop(year_list, index + 1, func, next)
+        } else {
+            next()
+        }
+    })
+}
+
+async function get_year_list() {
+    new Promise((resolve) => {
+        chrome.runtime.sendMessage(
+            {
+                type: 'parse',
+                target: 'year_list'
+            },
+            function (response) {
+                resolve(response['list'])
+            }
+        )
+    })
+        .then((year_list) => {
+            return new Promise(function (resolve) {
+                year_list = [2001, 2002] // For DEBUG
+                year_loop(
+                    year_list,
+                    0,
+                    function (year, callback) {
+                        get_item_in_year(year, 1, callback)
+                    },
+                    resolve
+                )
+            })
+        })
+        .then((year_list) => {
+            log_append('FINISH')
+        })
+}
+
 document.getElementById('start').onclick = function () {
     document.getElementById('start').disabled = true
     iniit_status()
 
     chrome.runtime.sendMessage({ type: 'port' }, function () {
-        get_item_in_year(2001, 1, function () {
-            console.log(JSON.stringify(item_list))
-        })
+        get_year_list()
     })
 }
 
