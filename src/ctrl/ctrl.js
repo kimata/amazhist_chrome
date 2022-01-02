@@ -70,9 +70,12 @@ document.getElementById('start').onclick = function () {
     })
 }
 
+function log_append(msg) {
+    var textarea = document.getElementById('log')
+    textarea.value += msg + '\n'
+    textarea.scrollTop = textarea.scrollHeight
+}
+
 chrome.runtime.onConnect.addListener(function (port) {
-    port.onMessage.addListener(function (msg) {
-        var textarea = document.getElementById('log')
-        textarea.value = msg + textarea.value
-    })
+    port.onMessage.addListener(log_append)
 })

@@ -42,7 +42,7 @@ chrome.browserAction.onClicked.addListener(function () {
 })
 
 function send_status(message) {
-    port_to_ctrl.postMessage(message + '\n')
+    port_to_ctrl.postMessage(message)
 }
 
 function error(message) {
