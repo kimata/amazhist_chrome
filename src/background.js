@@ -66,6 +66,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     if (tab.status === 'complete') {
         if (event_map['onload'] != null) {
             event_map['onload']()
+            event_map['onload'] = null
         }
     }
 })
