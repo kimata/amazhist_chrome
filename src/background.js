@@ -104,7 +104,7 @@ async function detail_page_list_parse(detail_page_list, send_response) {
         }
         order_count++
         send_status('　　　　' + order_count + '件目の注文を解析しました．')
-        await sleep(1)
+        await sleep(0.5)
     }
 
     if (order_count != detail_page_list.length) {
