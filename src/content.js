@@ -137,8 +137,6 @@ function order_detail_page_parse_normal() {
     const item_total_count = document.xpath(
         'count(//div[contains(@class, "a-box shipment")]//div[contains(@class, "a-fixed-left-grid a-spacing-")])'
     )
-    log.info({ item_total_count: item_total_count })
-
     var item_list = []
 
     const ship_count = document.xpath('count(//div[contains(@class, "a-box shipment")])')
@@ -162,9 +160,9 @@ function order_detail_page_parse_normal() {
         }
     }
 
-    log.info({ item_list: item_list })
-
-    return item_list
+    return {
+        list: item_list
+    }
 }
 
 function order_detail_page_parse_digital() {
@@ -173,7 +171,6 @@ function order_detail_page_parse_digital() {
     const item_total_count = document.xpath(
         'count(//div[contains(@class, "a-box")]//div[contains(@class, "a-fixed-left-grid a-spacing-")])'
     )
-    log.info({ item_total_count: item_total_count })
 
     var item_list = []
 
@@ -187,14 +184,14 @@ function order_detail_page_parse_digital() {
             (i + 1) +
             ']'
         item = order_item_page_parse(parent_xpath)
-        log.info({ item: item })
-
         item_list.push(item)
     }
 
     log.info({ item_list: item_list })
 
-    return item_list
+    return {
+        list: item_list
+    }
 }
 
 function order_detail_page_parse() {

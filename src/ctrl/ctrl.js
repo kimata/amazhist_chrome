@@ -83,21 +83,43 @@ document.getElementById('save').onclick = function () {
     write(item_list)
 }
 
-function year_loop(year_list, index, func, next) {
+function async_loop(list, index, func, next) {
     return new Promise(function (resolve, reject) {
-        if (index == year_list.length) {
+        if (index == list.length) {
             return resolve(false)
         }
-        func(year_list[index], function () {
+        func(list[index], index, function () {
             return resolve(true)
         })
     }).then(function (is_continue) {
         if (is_continue) {
-            return year_loop(year_list, index + 1, func, next)
+            return async_loop(list, index + 1, func, next)
         } else {
             next()
         }
     })
+}
+
+function get_detail_in_order(order, index, mode, callback) {
+    chrome.runtime.sendMessage(
+        {
+            type: 'parse',
+            target: 'detail',
+            date: order['date'],
+            index: index,
+            mode: mode,
+            url: order['url']
+        },
+        function (response) {
+            order_info['done_count'] += 1
+            for (item of response['list']) {
+                item_list.push(item)
+                order_info['total_price'] += item['price']
+            }
+            notify_progress()
+            callback(response)
+        }
+    )
 }
 
 function get_item_in_year(year, page, callback) {
@@ -109,18 +131,30 @@ function get_item_in_year(year, page, callback) {
             page: page
         },
         function (response) {
-            for (item of response['list']) {
-                item_list.push(item)
-                order_info['total_price'] += item['price']
-            }
-            order_info['done_count'] += response['order_count']
-            notify_progress()
-
-            if (response['is_last']) {
-                callback()
-            } else {
-                get_item_in_year(year, page + 1, callback)
-            }
+            return new Promise(function (resolve) {
+                async_loop(
+                    response['list'],
+                    0,
+                    function (order, index, order_callback) {
+                        var mode
+                        if (index == 0) {
+                            mode = 0
+                        } else if (index == response['list'].length - 1) {
+                            mode = 1
+                        } else {
+                            mode = 2
+                        }
+                        get_detail_in_order(order, index, mode, order_callback)
+                    },
+                    function () {
+                        if (response['is_last']) {
+                            callback()
+                        } else {
+                            return get_item_in_year(year, page + 1, callback)
+                        }
+                    }
+                )
+            })
         }
     )
 }
@@ -154,10 +188,10 @@ async function get_year_list() {
     })
         .then((year_list) => {
             return new Promise(function (resolve) {
-                year_loop(
+                async_loop(
                     year_list,
                     0,
-                    function (year, callback) {
+                    function (year, index, callback) {
                         get_order_count_in_year(year, callback)
                     },
                     function () {
@@ -168,10 +202,10 @@ async function get_year_list() {
         })
         .then((year_list) => {
             return new Promise(function (resolve) {
-                year_loop(
+                async_loop(
                     year_list,
                     0,
-                    function (year, callback) {
+                    function (year, index, callback) {
                         get_item_in_year(year, 1, callback)
                     },
                     resolve

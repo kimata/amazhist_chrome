@@ -80,58 +80,9 @@ function sleep(sec) {
     return new Promise((resolve) => setTimeout(resolve, sec * 1000))
 }
 
-function detail_page_parse(order) {
-    return cmd_request_parse(
-        {
-            type: 'parse',
-            target: 'detail'
-        },
-        order['url'],
-        '',
-        function (response) {
-            for (item of response) {
-                item['date'] = order['date']
-            }
-            return response
-        }
-    )
-}
-
-async function detail_page_list_parse(detail_page_list, send_response) {
-    send_status('　　' + detail_page_list['list'].length + '件の注文があります．')
-
-    item_list = []
-
-    var order_count = 0
-    send_status('　　　　', false)
-    for (detail_page of detail_page_list['list']) {
-        for (item of await detail_page_parse(detail_page)) {
-            item_list.push(item)
-        }
-        order_count++
-        send_status(order_count + '件目．', false)
-        await sleep(0.5)
-    }
-    send_status('')
-
-    if (order_count != detail_page_list.length) {
-        log.warn('Lost some detail page(s): expect=' + detail_page_list.length + ', actual=' + order_count)
-    }
-    send_status('　　注文リストの解析を完了しました．')
-
-    if (detail_page_list['is_last']) {
-        send_status(detail_page_list['year'] + '年の注文の解析を完了しました．')
-    }
-    send_response({
-        list: item_list,
-        order_count: order_count,
-        is_last: detail_page_list['is_last']
-    })
-}
-
 function cmd_request_parse(cmd, url, message, post_exec) {
     if (message !== '') {
-        send_status(message)
+        send_status(message, false)
     }
 
     return new Promise(function (resolve, reject) {
@@ -151,28 +102,41 @@ function cmd_request_parse(cmd, url, message, post_exec) {
 
 function cmd_handle_parse(cmd, send_response) {
     if (cmd['target'] === 'year_list') {
-        message = '注文がある年を解析します．'
+        message = '注文がある年を解析します．\n'
         url = hist_page_url(2020, 1) // ダミー
         post_exec = function (response) {
             send_status('　　' + response['list'].length + '年分の注文リストが見つかりました．')
             send_response(response)
         }
     } else if (cmd['target'] === 'order_count') {
-        message = cmd['year'] + '年の注文件数を解析します．'
+        message = cmd['year'] + '年の注文件数を解析します．\n'
         url = hist_page_url(cmd['year'], 1)
         post_exec = function (response) {
             send_status('　　' + response['count'] + '件の注文が見つかりました．')
+            response['year'] = cmd['year']
             send_response(response)
         }
     } else if (cmd['target'] === 'list') {
-        message = cmd['year'] + '年の注文リストを解析します．(p. ' + cmd['page'] + ')'
+        message = cmd['year'] + '年の注文リストを解析します．(p. ' + cmd['page'] + ')\n'
         url = hist_page_url(cmd['year'], cmd['page'])
         post_exec = function (response) {
             response['year'] = cmd['year']
-            detail_page_list_parse(response, send_response)
+            send_response(response)
+        }
+    } else if (cmd['target'] === 'detail') {
+        message = cmd['index'] + 1 + '件目． '
+        if (cmd['mode'] == 0) {
+            message = '　　' + message
+        } else if (cmd['mode'] == 1) {
+            message += '\n'
+        }
+        url = cmd['url']
+        post_exec = function (response) {
+            response['date'] = cmd['date']
+            send_response(response)
         }
     } else {
-        error('未知のコマンドです．')
+        error('未知のコマンドです．\n')
         return
     }
 
