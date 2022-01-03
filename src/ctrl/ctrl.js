@@ -148,7 +148,6 @@ async function get_year_list() {
         )
     })
         .then((year_list) => {
-            year_list = [2001, 2002] // For DEBUG
             return new Promise(function (resolve) {
                 year_loop(
                     year_list,
