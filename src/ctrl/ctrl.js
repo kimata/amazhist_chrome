@@ -174,7 +174,7 @@ async function get_year_list() {
             })
         })
         .then(() => {
-            log_append('完了しました．')
+            log_append('完了しました．\n')
 
             order_info['total_count'] = order_info['done_count']
             notify_progress()
@@ -194,7 +194,7 @@ document.getElementById('start').onclick = function () {
 
 function log_append(msg) {
     var textarea = document.getElementById('log')
-    textarea.value += msg + '\n'
+    textarea.value += msg
     textarea.scrollTop = textarea.scrollHeight
 }
 

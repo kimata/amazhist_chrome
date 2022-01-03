@@ -43,7 +43,10 @@ chrome.action.onClicked.addListener(function (tab) {
     })
 })
 
-function send_status(message) {
+function send_status(message, nl = true) {
+    if (nl) {
+        message += '\n'
+    }
     port_to_ctrl.postMessage(message)
 }
 
@@ -100,14 +103,16 @@ async function detail_page_list_parse(detail_page_list, send_response) {
     item_list = []
 
     var order_count = 0
+    send_status('　　　　', false)
     for (detail_page of detail_page_list['list']) {
         for (item of await detail_page_parse(detail_page)) {
             item_list.push(item)
         }
         order_count++
-        send_status('　　　　' + order_count + '件目の注文を解析しました．')
+        send_status(order_count + '件目．', false)
         await sleep(0.5)
     }
+    send_status('')
 
     if (order_count != detail_page_list.length) {
         log.warn('Lost some detail page(s): expect=' + detail_page_list.length + ', actual=' + order_count)
