@@ -28,16 +28,21 @@ function notify_progress() {
     document.getElementById('order_count_total').innerText = order_info['total_count'].toLocaleString()
     document.getElementById('order_price_total').innerText = order_info['total_price'].toLocaleString()
 
-    rate = Math.round((100 * order_info['done_count']) / order_info['total_count'])
+    var done_rate
+    if (order_info['done_count'] == 0) {
+        done_rate = 0
+    } else {
+        done_rate = (100 * order_info['done_count']) / order_info['total_count']
+    }
 
     progress_bar = document.getElementById('progress_bar')
-    progress_bar.innerText = rate + '%'
-    progress_bar.style.width = rate + '%'
+    progress_bar.innerText = Math.round(done_rate) + '%'
+    progress_bar.style.width = Math.round(done_rate) + '%'
 
-    if (order_info['done_count'] != 0 && order_info['total_count'] != 0) {
+    if (done_rate > 0.1) {
         now = new Date()
         elapsed_sec = Math.round((now.getTime() - start_time.getTime()) / 1000)
-        remaining_sec = (elapsed_sec / rate) * (100 - rate)
+        remaining_sec = (elapsed_sec / done_rate) * (100 - done_rate)
 
         var remaining_text
         if (remaining_sec < 300) {
