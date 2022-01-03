@@ -235,7 +235,7 @@ function cmd_handler(cmd, sender, send_response) {
         })
         send_response('ERROR: Unknown cmd type')
     }
-    chrome.extension.onRequest.removeListener(cmd_handelr)
+
     return true
 }
 
