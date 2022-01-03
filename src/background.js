@@ -32,7 +32,7 @@ function tab_open(type, url, active = true) {
     }
 }
 
-chrome.browserAction.onClicked.addListener(function () {
+chrome.action.onClicked.addListener(function (tab) {
     tab_open('ctrl', 'ctrl/index.htm')
     tab_open('worker', 'https://www.amazon.co.jp/', false)
 
