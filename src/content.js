@@ -20,6 +20,11 @@ document.xpath = function (expression) {
     }
 }
 
+function print_stacktrace(e) {
+    log.error(e.message)
+    log.error(e.stack)
+}
+
 function year_list_page_parse() {
     year_list = []
 
@@ -193,10 +198,16 @@ function order_detail_page_parse_digital() {
 }
 
 function order_detail_page_parse() {
-    if (document.xpath('count(//div[contains(@class, "a-box shipment")])') != 0) {
-        return order_detail_page_parse_normal()
-    } else {
-        return order_detail_page_parse_digital()
+    try {
+        if (document.xpath('count(//div[contains(@class, "a-box shipment")])') != 0) {
+            return order_detail_page_parse_normal()
+        } else {
+            return order_detail_page_parse_digital()
+        }
+    } catch (e) {
+        print_stacktrace(e)
+
+        return []
     }
 }
 
