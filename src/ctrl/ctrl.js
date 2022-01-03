@@ -83,6 +83,7 @@ document.getElementById('save').onclick = function () {
     write(item_list)
 }
 
+// 実行順序を保ちながら非同期でリストに対して処理を実行
 function async_loop(list, index, func, next) {
     return new Promise(function (resolve, reject) {
         if (index == list.length) {
