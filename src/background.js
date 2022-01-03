@@ -1,3 +1,5 @@
+importScripts('loglevel.min.js')
+
 log.setLevel('trace')
 
 var port_to_ctrl = null
