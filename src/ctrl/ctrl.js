@@ -190,7 +190,8 @@ function get_detail_in_order(order, index, mode, year, callback) {
             for (item of response['list']) {
                 item_list.push(item)
                 order_info['price_total'] += item['price']
-                order_info['by_year']['count'][year_index(year)] += item['price']
+                order_info['by_year']['price'][year_index(year)] += item['price']
+                chart_price.update()
             }
             notify_progress()
             callback(response)
@@ -260,10 +261,13 @@ async function get_year_list() {
                 target: 'year_list'
             },
             function (response) {
+                // NOTE: for DEBUG
+                // response['list'] = [2001,2002]
+                // response['list'] = [2005,2004,2003,2002,2001]
                 order_info['year_list'] = response['list']
 
-                order_info['by_year']['count'] = new Array(order_info['year_list'].length)
-                order_info['by_year']['price'] = new Array(order_info['year_list'].length)
+                order_info['by_year']['count'] = new Array(order_info['year_list'].length).fill(0)
+                order_info['by_year']['price'] = new Array(order_info['year_list'].length).fill(0)
 
                 chart_init()
                 resolve(response['list'])
