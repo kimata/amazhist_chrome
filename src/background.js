@@ -125,9 +125,10 @@ async function cmd_handle_parse(cmd, send_response) {
         }
     } else if (cmd['target'] === 'detail') {
         message = cmd['index'] + 1 + '件目． '
-        if (cmd['mode'] == 0) {
+        if ((cmd['mode'] & 0x01) != 0) {
             message = '　　' + message
-        } else if (cmd['mode'] == 1) {
+        }
+        if ((cmd['mode'] & 0x10) != 0) {
             message += '\n'
         }
         url = cmd['url']

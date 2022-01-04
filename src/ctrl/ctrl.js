@@ -213,13 +213,12 @@ function get_item_in_year(year, page, callback) {
                     response['list'],
                     0,
                     function (order, index, order_callback) {
-                        var mode
+                        var mode = 0
                         if (index == 0) {
-                            mode = 0
-                        } else if (index == response['list'].length - 1) {
-                            mode = 1
-                        } else {
-                            mode = 2
+                            mode |= 0x01
+                        }
+                        if (index == response['list'].length - 1) {
+                            mode |= 0x10
                         }
                         get_detail_in_order(order, index, mode, year, order_callback)
                     },
