@@ -69,7 +69,9 @@ function chart_init() {
     chart_price = new Chart(document.getElementById('chart_price'), {
         type: 'bar',
         data: {
-            labels: order_info['year_list'].reverse(),
+            labels: order_info['year_list'].reverse().map((year) => {
+                return year + '年'
+            }),
             datasets: [
                 {
                     label: '注文金額',
@@ -105,7 +107,6 @@ function chart_init() {
                         display: false
                     },
                     ticks: {
-                        align: 'end',
                         callback: function (value, index, values) {
                             return value.toLocaleString() + '件'
                         }
@@ -123,6 +124,19 @@ function chart_init() {
                     ticks: {
                         callback: function (value, index, values) {
                             return value.toLocaleString() + '円'
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            if (context.datasetIndex == 0) {
+                                return context.parsed.y.toLocaleString() + '円'
+                            } else {
+                                return context.parsed.y.toLocaleString() + '件'
+                            }
                         }
                     }
                 }
