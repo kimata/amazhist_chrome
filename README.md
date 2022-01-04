@@ -8,7 +8,7 @@ amazhist_chrome は，Amazon の買い物履歴情報を取得する Chrome 拡�
 
 1. Chrome の「拡張機能」タブでディベロッパーモードを有効化．
 
-2. 「パッケージ化されていない拡張機能を読み込む」で，amazhist_chrom の src ディレクトリを指定．
+2. 「パッケージ化されていない拡張機能を読み込む」で，amazhist_chrom の **src ディレクトリ** を指定．
 
 ![スクリーンショット](img/usage_1.png)
 
