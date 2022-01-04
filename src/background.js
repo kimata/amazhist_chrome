@@ -2,6 +2,8 @@ importScripts('loglevel.min.js')
 
 log.setLevel('trace')
 
+const RETRY_COUNT = 2
+
 var port_to_ctrl = null
 
 var tab_id_map = {
@@ -80,7 +82,11 @@ function sleep(sec) {
     return new Promise((resolve) => setTimeout(resolve, sec * 1000))
 }
 
-function cmd_request_parse(cmd, url, message, post_exec) {
+async function cmd_request_parse(cmd, url, message, post_exec, fail_count = 0) {
+    if (fail_count != 0) {
+        await sleep(2)
+    }
+
     if (message !== '') {
         send_status(message, false)
     }
@@ -89,7 +95,7 @@ function cmd_request_parse(cmd, url, message, post_exec) {
         event_map['onload'] = function () {
             chrome.tabs.sendMessage(tab_id_map['worker'], cmd, function (response) {
                 event_map['onload'] = null
-                if (typeof response === 'string') {
+                if (typeof response === 'string' || typeof response === 'undefined') {
                     error(response)
                     reject()
                 }
@@ -97,6 +103,13 @@ function cmd_request_parse(cmd, url, message, post_exec) {
             })
         }
         chrome.tabs.update(tab_id_map['worker'], { url: url })
+    }).catch(function (error) {
+        fail_count += 1
+
+        if (fail_count < RETRY_COUNT) {
+            send_status('エラーが発生したのでリトライします．')
+            return cmd_request_parse(cmd, url, message, post_exec, fail_count)
+        }
     })
 }
 
