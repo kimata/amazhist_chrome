@@ -72,16 +72,16 @@ function chart_init() {
             labels: order_info['year_list'].reverse(),
             datasets: [
                 {
-                    label: '注文件数',
-                    yAxisID: 'count',
-                    data: order_info['by_year']['count'].reverse(),
-                    backgroundColor: '#ffc107'
-                },
-                {
                     label: '注文金額',
                     yAxisID: 'price',
                     data: order_info['by_year']['price'].reverse(),
                     backgroundColor: '#fd7e14'
+                },
+                {
+                    label: '注文件数',
+                    yAxisID: 'count',
+                    data: order_info['by_year']['count'].reverse(),
+                    backgroundColor: '#ffc107'
                 }
             ]
         },
