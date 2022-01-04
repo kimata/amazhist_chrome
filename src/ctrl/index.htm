@@ -22,41 +22,52 @@
             <button id="start" class="btn btn-primary">スタート</button>
         </div>
 
-        <div class="container mt-5">
-            <h2>ステータス</h2>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="container mt-5">
+                        <h2>ステータス</h2>
 
-            <div class="container">
-                <div class="row">
-                    <div class="col">
-                        処理済み注文:
-                        <span id="order_count_done" class="display-3">0</span> / <span id="order_count_total">0</span>件
-                    </div>
-                    <div class="col">
-                        <div class="float-end">合計<span id="order_price_total" class="display-3">0</span>円</div>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm-12 col-lg-6">
+                                    処理済み注文:
+                                    <span id="order_count_done" class="display-6">0</span> /
+                                    <span id="order_count_total">0</span>件
+                                </div>
+                                <div class="col">
+                                    <div class="float-end">
+                                        合計<span id="order_price_total" class="display-6">0</span>円
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="progress" style="height: 20px">
+                            <div
+                                class="progress-bar"
+                                aria-valuenow="25"
+                                aria-valuemin="0"
+                                aria-valuemax="100"
+                                style="width: 0%"
+                                id="progress_bar"
+                            >
+                                0%
+                            </div>
+                        </div>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="float-end">予想残り時間: <span id="remaining_time">?</span></div>
+                                    <textarea id="log" rows="5" class="overflow-auto mt-3"></textarea>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="progress" style="height: 20px">
-                <div
-                    class="progress-bar"
-                    aria-valuenow="25"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                    style="width: 0%"
-                    id="progress_bar"
-                >
-                    0%
+                <div class="col-sm-12 col-lg-6">
+                    <canvas id="chart_price"></canvas>
                 </div>
             </div>
-            <div class="container">
-                <div class="row">
-                    <div class="col">
-                        <div class="float-end">予想残り時間: <span id="remaining_time">?</span></div>
-                    </div>
-                </div>
-            </div>
-
-            <textarea id="log" rows="5" class="overflow-auto mt-3"></textarea>
         </div>
 
         <div class="container mt-5">
@@ -69,6 +80,7 @@
         </div>
 
         <script src="bootstrap.min.js"></script>
+        <script src="chart.js"></script>
         <script src="../loglevel.min.js"></script>
         <script src="ctrl.js"></script>
     </body>
