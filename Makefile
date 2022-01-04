@@ -8,3 +8,5 @@ all:
 archive:
 	git archive HEAD:src --output=amazhist_chrome.zip --prefix=amazhist_chrome/
 
+gif:
+	ffmpeg -i input.mp4 -filter_complex "[0:v] fps=10,scale=1024:-1:flags=lanczos,split [a][b];[a] palettegen [p];[b][p] paletteuse" output.gif
