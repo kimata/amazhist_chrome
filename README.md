@@ -2,7 +2,7 @@
 
 amazhist_chrome は，Amazon の買い物履歴情報を取得する Chrome 拡張です．
 
-![スクリーンショット](img/screenshot.png)
+![スクリーンショット](img/movie.gif)
 
 ## インストール
 
