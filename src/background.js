@@ -100,7 +100,7 @@ function cmd_request_parse(cmd, url, message, post_exec) {
     })
 }
 
-function cmd_handle_parse(cmd, send_response) {
+async function cmd_handle_parse(cmd, send_response) {
     if (cmd['target'] === 'year_list') {
         message = '注文がある年を解析します．\n'
         url = hist_page_url(2020, 1) // ダミー
@@ -135,6 +135,7 @@ function cmd_handle_parse(cmd, send_response) {
             response['date'] = cmd['date']
             send_response(response)
         }
+        await sleep(1)
     } else {
         error('未知のコマンドです．\n')
         return
