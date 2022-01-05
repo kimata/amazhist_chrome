@@ -2,7 +2,7 @@
     "name": "Amazhist Chrome Extension",
     "short_name": "Amazhist",
     "version": "0.0.3",
-    "manifest_version": 2,
+    "manifest_version": 3,
     "description": "Amazon 購入履歴を収集する拡張",
     "icons": {
         "16": "icon/icon-16.png",
@@ -13,13 +13,13 @@
     "permissions": [
         "background"
     ],
-    "browser_action": {
+    "action": {
         "default_icon": {
             "32": "icon/icon-32.png"
         }
     },
     "background": {
-        "scripts": ["loglevel.min.js", "background.js"]
+        "service_worker": "background.js"
     },
     "content_scripts": [{
         "matches": ["https://www.amazon.co.jp/*"],

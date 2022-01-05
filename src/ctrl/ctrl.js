@@ -3,7 +3,7 @@ var item_list = null
 var order_info = null
 var chart_order = null
 
-function init_status() {
+function state_init() {
     start_time = new Date()
     item_list = []
     order_info = {
@@ -14,7 +14,7 @@ function init_status() {
         by_year: {}
     }
 
-    document.getElementById('log').value = ''
+    document.getElementById('status').value = ''
     notify_progress()
 }
 
@@ -110,7 +110,7 @@ function async_loop(list, index, func, next) {
 }
 
 function get_detail_in_order(order, index, mode, year, callback) {
-    chrome.runtime.sendMessage(
+    cmd_handle(
         {
             to: 'background',
             type: 'parse',
@@ -122,11 +122,9 @@ function get_detail_in_order(order, index, mode, year, callback) {
         },
         function (response) {
             order_info['count_done'] += 1
-            console.log(response)
-            log.trace(response)
 
             if (typeof response === 'undefined') {
-                log_append('意図しないエラーが発生しました．\n')
+                status_error('意図しないエラーが発生しました．')
                 log.trace('BUG?')
                 return callback()
             }
@@ -143,7 +141,7 @@ function get_detail_in_order(order, index, mode, year, callback) {
 }
 
 function get_item_in_year(year, page, callback) {
-    chrome.runtime.sendMessage(
+    cmd_handle(
         {
             to: 'background',
             type: 'parse',
@@ -181,7 +179,7 @@ function get_item_in_year(year, page, callback) {
 }
 
 function get_order_count_in_year(year, callback) {
-    chrome.runtime.sendMessage(
+    cmd_handle(
         {
             to: 'background',
             type: 'parse',
@@ -200,7 +198,7 @@ function get_order_count_in_year(year, callback) {
 
 async function get_year_list() {
     new Promise((resolve) => {
-        chrome.runtime.sendMessage(
+        cmd_handle(
             {
                 to: 'background',
                 type: 'parse',
@@ -248,7 +246,7 @@ async function get_year_list() {
             })
         })
         .then(() => {
-            log_append('完了しました．\n')
+            status_info('完了しました．')
 
             order_info['count_total'] = order_info['count_done']
             notify_progress()
@@ -259,28 +257,12 @@ async function get_year_list() {
 
 document.getElementById('start').onclick = function () {
     document.getElementById('start').disabled = true
-    init_status()
 
-    chrome.runtime.sendMessage(
-        {
-            to: 'background',
-            type: 'port'
-        },
-        function () {
-            get_year_list()
-        }
-    )
+    status_info('開始します．')
+
+    state_init()
+
+    worker_init().then(() => {
+        get_year_list()
+    })
 }
-
-function log_append(msg) {
-    var textarea = document.getElementById('log')
-    textarea.value += msg
-    textarea.scrollTop = textarea.scrollHeight
-}
-
-chrome.runtime.onConnect.addListener(function (port) {
-    if (port.name !== 'port to ctrl') {
-        return
-    }
-    port.onMessage.addListener(log_append)
-})

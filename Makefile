@@ -3,6 +3,9 @@ all:
 	./node_modules/.bin/prettier --write src/content.js
 	./node_modules/.bin/prettier --write src/ctrl/ctrl.css
 	./node_modules/.bin/prettier --write src/ctrl/ctrl.js
+	./node_modules/.bin/prettier --write src/ctrl/status.js
+	./node_modules/.bin/prettier --write src/ctrl/worker.js
+	./node_modules/.bin/prettier --write src/ctrl/chart_order.js
 	./node_modules/.bin/prettier --write src/ctrl/index.htm
 
 archive:
