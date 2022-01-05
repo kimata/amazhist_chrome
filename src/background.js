@@ -16,8 +16,9 @@ var event_map = {
 }
 
 function tab_open_impl(type, url, active = true) {
-    chrome.tabs.create({ url: url, active: active, autoDiscardable: false }, function (tab) {
+    chrome.tabs.create({ url: url, active: active }, function (tab) {
         tab_id_map[type] = tab.id
+        chrome.tabs.update(tab_id_map[type] , {autoDiscardable: false});
     })
 }
 
