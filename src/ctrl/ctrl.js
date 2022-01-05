@@ -201,6 +201,14 @@ function get_detail_in_order(order, index, mode, year, callback) {
         },
         function (response) {
             order_info['count_done'] += 1
+            console.log(response)
+            log.trace(response)
+
+            if (typeof response === 'undefined') {
+                log_append('意図しないエラーが発生しました．\n')
+                log.trace('BUG?')
+                return callback()
+            }
             for (item of response['list']) {
                 item_list.push(item)
                 order_info['price_total'] += item['price']
@@ -340,5 +348,8 @@ function log_append(msg) {
 }
 
 chrome.runtime.onConnect.addListener(function (port) {
+    if (port.name !== 'port to ctrl') {
+        return
+    }
     port.onMessage.addListener(log_append)
 })

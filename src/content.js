@@ -232,8 +232,6 @@ function cmd_handler(cmd, sender, send_response) {
         })
         send_response('ERROR: Unknown cmd type')
     }
-
-    return true
 }
 
 chrome.runtime.onMessage.addListener(cmd_handler)

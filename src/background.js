@@ -6,6 +6,7 @@ const RETRY_COUNT = 2
 
 var port_to_ctrl = null
 
+var worker_exec_count = 0
 var tab_id_map = {
     ctrl: null,
     worker: null
@@ -15,38 +16,45 @@ var event_map = {
     onload: null
 }
 
-function tab_open_impl(type, url, active = true) {
+function tab_open_impl(type, url, active, callback) {
     chrome.tabs.create({ url: url, active: active }, function (tab) {
         tab_id_map[type] = tab.id
-        chrome.tabs.update(tab_id_map[type] , {autoDiscardable: false});
+        chrome.tabs.update(tab_id_map[type], { autoDiscardable: false }, function () {
+            callback()
+        })
     })
 }
 
-function tab_open(type, url, active = true) {
+function tab_open(type, url, active, callback = function () {}) {
     if (tab_id_map[type] == null) {
-        tab_open_impl(type, url, active)
+        tab_open_impl(type, url, active, callback)
     } else {
         chrome.tabs.get(tab_id_map[type], function (tab) {
             if (typeof tab === 'undefined') {
-                tab_open_impl(type, url, active)
+                tab_open_impl(type, url, active, callback)
             }
         })
-        return
     }
 }
 
 chrome.action.onClicked.addListener(function (tab) {
-    tab_open('ctrl', 'ctrl/index.htm')
+    tab_open('ctrl', 'ctrl/index.htm', true)
     tab_open('worker', 'https://www.amazon.co.jp/', false)
 
     chrome.tabs.onRemoved.addListener(function (tabid, removed) {
         if (tabid == tab_id_map['ctrl']) {
-            chrome.tabs.remove(tab_id_map['worker'])
+            if (tab_id_map['worker'] != null) {
+                chrome.tabs.remove(tab_id_map['worker'])
+            }
         }
     })
 })
 
 function send_status(message, nl = true) {
+    if (port_to_ctrl == null) {
+        return
+    }
+
     if (nl) {
         message += '\n'
     }
@@ -70,7 +78,10 @@ function hist_page_url(year, page) {
     )
 }
 
-chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+chrome.tabs.onUpdated.addListener(function (tab_id, change_info, tab) {
+    if (tab_id_map['worker'] == null || tab_id != tab_id_map['worker']) {
+        return
+    }
     if (tab.status === 'complete') {
         if (event_map['onload'] != null) {
             event_map['onload']()
@@ -92,15 +103,36 @@ async function cmd_request_parse(cmd, url, message, post_exec, fail_count = 0) {
         send_status(message, false)
     }
 
+    var refresh_tab = new Promise(function (resolve, reject) {
+        if (worker_exec_count++ == 10) {
+            log.trace('Refresh tab')
+            chrome.tabs.remove(tab_id_map['worker'], function () {
+                tab_id_map['worker'] = null
+                worker_exec_count = 0
+                tab_open('worker', url, false, function () {
+                    resolve()
+                })
+            })
+        } else {
+            resolve()
+        }
+    })
+
+    await refresh_tab
+
     return new Promise(function (resolve, reject) {
         event_map['onload'] = function () {
             chrome.tabs.sendMessage(tab_id_map['worker'], cmd, function (response) {
                 event_map['onload'] = null
+                console.log(response)
+                log.trace(response)
+                log.trace(typeof response)
                 if (typeof response === 'string' || typeof response === 'undefined') {
                     error(response)
                     reject()
+                } else {
+                    resolve(post_exec(response))
                 }
-                resolve(post_exec(response))
             })
         }
         chrome.tabs.update(tab_id_map['worker'], { url: url })
@@ -108,13 +140,18 @@ async function cmd_request_parse(cmd, url, message, post_exec, fail_count = 0) {
         fail_count += 1
 
         if (fail_count < RETRY_COUNT) {
-            send_status('エラーが発生したのでリトライします．')
+            send_status('リトライします．')
             return cmd_request_parse(cmd, url, message, post_exec, fail_count)
+        } else {
+            send_status('エラーが連続したので諦めます．(URL: ' + url + ')')
+            post_exec({ list: [] })
         }
     })
 }
 
 async function cmd_handle_parse(cmd, send_response) {
+    cmd['to'] = 'content'
+
     if (cmd['target'] === 'year_list') {
         message = '注文がある年を解析します．\n'
         url = hist_page_url(2020, 1) // ダミー
