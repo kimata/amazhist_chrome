@@ -203,6 +203,11 @@ function cmd_handle_port(cmd, send_response) {
 }
 
 chrome.runtime.onMessage.addListener(function (cmd, sender, send_response) {
+    if (cmd['to'] !== 'background') {
+        log.trace(cmd)
+        return false
+    }
+
     if (cmd['type'] === 'port') {
         cmd_handle_port(cmd, send_response)
     } else if (cmd['type'] === 'parse') {

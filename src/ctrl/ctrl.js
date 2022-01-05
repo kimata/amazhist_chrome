@@ -192,6 +192,7 @@ function async_loop(list, index, func, next) {
 function get_detail_in_order(order, index, mode, year, callback) {
     chrome.runtime.sendMessage(
         {
+            to: 'background',
             type: 'parse',
             target: 'detail',
             date: order['date'],
@@ -224,6 +225,7 @@ function get_detail_in_order(order, index, mode, year, callback) {
 function get_item_in_year(year, page, callback) {
     chrome.runtime.sendMessage(
         {
+            to: 'background',
             type: 'parse',
             target: 'list',
             year: year,
@@ -261,6 +263,7 @@ function get_item_in_year(year, page, callback) {
 function get_order_count_in_year(year, callback) {
     chrome.runtime.sendMessage(
         {
+            to: 'background',
             type: 'parse',
             target: 'order_count',
             year: year
@@ -279,6 +282,7 @@ async function get_year_list() {
     new Promise((resolve) => {
         chrome.runtime.sendMessage(
             {
+                to: 'background',
                 type: 'parse',
                 target: 'year_list'
             },
@@ -336,9 +340,15 @@ document.getElementById('start').onclick = function () {
     document.getElementById('start').disabled = true
     init_status()
 
-    chrome.runtime.sendMessage({ type: 'port' }, function () {
-        get_year_list()
-    })
+    chrome.runtime.sendMessage(
+        {
+            to: 'background',
+            type: 'port'
+        },
+        function () {
+            get_year_list()
+        }
+    )
 }
 
 function log_append(msg) {

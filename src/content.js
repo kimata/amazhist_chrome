@@ -203,12 +203,15 @@ function order_detail_page_parse() {
         }
     } catch (e) {
         print_stacktrace(e)
-
-        return []
+        return e.message
     }
 }
 
 function cmd_handler(cmd, sender, send_response) {
+    if (cmd['to'] !== 'content') {
+        return false
+    }
+
     if (cmd['type'] === 'parse') {
         if (cmd['target'] === 'year_list') {
             send_response(year_list_page_parse())
