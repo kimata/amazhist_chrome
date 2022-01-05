@@ -276,7 +276,7 @@ async function get_year_list() {
             },
             function (response) {
                 // NOTE: for DEBUG
-                // response['list'] = [2001,2002]
+                // response['list'] = [2002, 2001]
                 // response['list'] = [2005,2004,2003,2002,2001]
                 order_info['year_list'] = response['list']
 
