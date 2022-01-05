@@ -25,22 +25,20 @@ function init() {
     }
 }
 
-function tab_open_impl(type, url, active, callback) {
+function tab_open_impl(type, url, active) {
     chrome.tabs.create({ url: url, active: active }, function (tab) {
         tab_id_map[type] = tab.id
-        chrome.tabs.update(tab_id_map[type], { autoDiscardable: false }, function () {
-            callback()
-        })
+        chrome.tabs.update(tab_id_map[type], { autoDiscardable: false })
     })
 }
 
-function tab_open(type, url, active, callback = function () {}) {
+function tab_open(type, url, active = false) {
     if (tab_id_map[type] == null) {
-        tab_open_impl(type, url, active, callback)
+        tab_open_impl(type, url, active)
     } else {
         chrome.tabs.get(tab_id_map[type], function (tab) {
             if (typeof tab === 'undefined') {
-                tab_open_impl(type, url, active, callback)
+                tab_open_impl(type, url, active)
             }
         })
     }
@@ -51,7 +49,7 @@ chrome.browserAction.onClicked.addListener(function (tab) {
     init()
 
     tab_open('ctrl', 'ctrl/index.htm', true)
-    tab_open('worker', 'https://www.amazon.co.jp/', false)
+    tab_open('worker', 'https://www.amazon.co.jp/')
 
     chrome.tabs.onRemoved.addListener(function (tabid, removed) {
         if (tabid == tab_id_map['ctrl']) {
@@ -114,24 +112,6 @@ async function cmd_request_parse(cmd, url, message, post_exec, fail_count = 0) {
     if (message !== '') {
         send_status(message, false)
     }
-
-    // NOTE: この処理は不要
-    // var refresh_tab = new Promise(function (resolve, reject) {
-    //     if (worker_exec_count++ == 10) {
-    //         log.trace('Refresh tab')
-    //         chrome.tabs.remove(tab_id_map['worker'], function () {
-    //             tab_id_map['worker'] = null
-    //             worker_exec_count = 0
-    //             tab_open('worker', url, false, function () {
-    //                 resolve()
-    //             })
-    //         })
-    //     } else {
-    //         resolve()
-    //     }
-    // })
-
-    // await refresh_tab
 
     return new Promise(function (resolve, reject) {
         event_map['onload'] = function () {

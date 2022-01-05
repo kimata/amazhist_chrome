@@ -1,7 +1,7 @@
 var start_time = null
 var item_list = null
 var order_info = null
-var chart_price = null
+var chart_order = null
 
 function init_status() {
     start_time = new Date()
@@ -60,89 +60,9 @@ function notify_progress() {
     } else {
         document.getElementById('remaining_time').innerText = '?'
     }
-    if (chart_price != null) {
-        chart_price.update()
+    if (chart_order != null) {
+        chart_order.update()
     }
-}
-
-function chart_init() {
-    chart_price = new Chart(document.getElementById('chart_price'), {
-        type: 'bar',
-        data: {
-            labels: order_info['year_list'].reverse().map((year) => {
-                return year + '年'
-            }),
-            datasets: [
-                {
-                    label: '注文金額',
-                    yAxisID: 'price',
-                    data: order_info['by_year']['price'].reverse(),
-                    backgroundColor: '#fd7e14'
-                },
-                {
-                    label: '注文件数',
-                    yAxisID: 'count',
-                    data: order_info['by_year']['count'].reverse(),
-                    backgroundColor: '#ffc107'
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            title: {
-                display: true,
-                text: '合計購入金額'
-            },
-            scales: {
-                count: {
-                    title: {
-                        text: '件数',
-                        display: true
-                    },
-                    type: 'linear',
-                    position: 'right',
-                    suggestedMin: 0,
-                    suggestedMax: 10,
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        callback: function (value, index, values) {
-                            return value.toLocaleString() + '件'
-                        }
-                    }
-                },
-                price: {
-                    title: {
-                        text: '金額',
-                        display: true
-                    },
-                    type: 'linear',
-                    position: 'left',
-                    suggestedMin: 0,
-                    suggestedMax: 10000,
-                    ticks: {
-                        callback: function (value, index, values) {
-                            return value.toLocaleString() + '円'
-                        }
-                    }
-                }
-            },
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function (context) {
-                            if (context.datasetIndex == 0) {
-                                return context.parsed.y.toLocaleString() + '円'
-                            } else {
-                                return context.parsed.y.toLocaleString() + '件'
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    })
 }
 
 function getNewFileHandle() {
@@ -214,7 +134,7 @@ function get_detail_in_order(order, index, mode, year, callback) {
                 item_list.push(item)
                 order_info['price_total'] += item['price']
                 order_info['by_year']['price'][year_index(year)] += item['price']
-                chart_price.update()
+                chart_order.update()
             }
             notify_progress()
             callback(response)
@@ -288,6 +208,7 @@ async function get_year_list() {
             },
             function (response) {
                 // NOTE: for DEBUG
+                // response['list'] = [2013, 2012, 2011, 2010, 2009, 2008, 2007]
                 // response['list'] = [2002, 2001]
                 // response['list'] = [2005,2004,2003,2002,2001]
                 order_info['year_list'] = response['list']
@@ -295,7 +216,7 @@ async function get_year_list() {
                 order_info['by_year']['count'] = new Array(order_info['year_list'].length).fill(0)
                 order_info['by_year']['price'] = new Array(order_info['year_list'].length).fill(0)
 
-                chart_init()
+                chart_order = chart_order_create(document.getElementById('chart_order'), order_info)
                 resolve(response['list'])
             }
         )

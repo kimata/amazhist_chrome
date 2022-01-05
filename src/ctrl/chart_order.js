@@ -1,5 +1,5 @@
-function chart_order_create() {
-    return new Chart(document.getElementById('chart_order'), {
+function chart_order_create(context, order_info) {
+    return new Chart(context, {
         type: 'bar',
         data: {
             labels: order_info['year_list'].reverse().map((year) => {
