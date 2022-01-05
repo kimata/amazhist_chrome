@@ -1,8 +1,10 @@
 {
     "name": "Amazhist Chrome Extension",
     "short_name": "Amazhist",
-    "version": "0.0.2",
-    "manifest_version": 3,
+    "version": "0.0.3",
+    // Use V2 to avoid background.js being reloaded periodically.
+    // ref: https://bugs.chromium.org/p/chromium/issues/detail?id=1152255
+    "manifest_version": 2,
     "description": "Amazon 購入履歴を収集する拡張",
     "icons": {
         "16": "icon/icon-16.png",
@@ -13,13 +15,14 @@
     "permissions": [
         "background"
     ],
-    "action": {
+    "browser_action": {
         "default_icon": {
             "32": "icon/icon-32.png"
         }
     },
     "background": {
-        "service_worker": "background.js"
+        "scripts": ["loglevel.min.js", "background.js"]
+//        "service_worker": "background.js"
     },
     "content_scripts": [{
         "matches": ["https://www.amazon.co.jp/*"],

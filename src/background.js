@@ -1,19 +1,28 @@
-importScripts('loglevel.min.js')
+// importScripts('loglevel.min.js')
 
 log.setLevel('trace')
 
 const RETRY_COUNT = 2
 
-var port_to_ctrl = null
+var port_to_ctrl
+var tab_id_map
+var event_map
 
-var worker_exec_count = 0
-var tab_id_map = {
-    ctrl: null,
-    worker: null
-}
+console.log('REALOD')
 
-var event_map = {
-    onload: null
+function init() {
+    console.log('INIT')
+    port_to_ctrl = null
+    worker_exec_count = 0
+
+    tab_id_map = {
+        ctrl: null,
+        worker: null
+    }
+
+    event_map = {
+        onload: null
+    }
 }
 
 function tab_open_impl(type, url, active, callback) {
@@ -37,7 +46,10 @@ function tab_open(type, url, active, callback = function () {}) {
     }
 }
 
-chrome.action.onClicked.addListener(function (tab) {
+// chrome.action.onClicked.addListener(function (tab) {
+chrome.browserAction.onClicked.addListener(function (tab) {
+    init()
+
     tab_open('ctrl', 'ctrl/index.htm', true)
     tab_open('worker', 'https://www.amazon.co.jp/', false)
 
@@ -103,30 +115,28 @@ async function cmd_request_parse(cmd, url, message, post_exec, fail_count = 0) {
         send_status(message, false)
     }
 
-    var refresh_tab = new Promise(function (resolve, reject) {
-        if (worker_exec_count++ == 10) {
-            log.trace('Refresh tab')
-            chrome.tabs.remove(tab_id_map['worker'], function () {
-                tab_id_map['worker'] = null
-                worker_exec_count = 0
-                tab_open('worker', url, false, function () {
-                    resolve()
-                })
-            })
-        } else {
-            resolve()
-        }
-    })
+    // NOTE: この処理は不要
+    // var refresh_tab = new Promise(function (resolve, reject) {
+    //     if (worker_exec_count++ == 10) {
+    //         log.trace('Refresh tab')
+    //         chrome.tabs.remove(tab_id_map['worker'], function () {
+    //             tab_id_map['worker'] = null
+    //             worker_exec_count = 0
+    //             tab_open('worker', url, false, function () {
+    //                 resolve()
+    //             })
+    //         })
+    //     } else {
+    //         resolve()
+    //     }
+    // })
 
-    await refresh_tab
+    // await refresh_tab
 
     return new Promise(function (resolve, reject) {
         event_map['onload'] = function () {
             chrome.tabs.sendMessage(tab_id_map['worker'], cmd, function (response) {
                 event_map['onload'] = null
-                console.log(response)
-                log.trace(response)
-                log.trace(typeof response)
                 if (typeof response === 'string' || typeof response === 'undefined') {
                     error(response)
                     reject()
@@ -168,7 +178,7 @@ async function cmd_handle_parse(cmd, send_response) {
             send_response(response)
         }
     } else if (cmd['target'] === 'list') {
-        message = cmd['year'] + '年の注文リストを解析します．(p.' + cmd['page'] + ' / ' + cmd['page_total'] + ')\n'
+        message = cmd['year'] + '年の注文リストを解析します．(p.' + cmd['page'] + '/' + cmd['page_total'] + ')\n'
         url = hist_page_url(cmd['year'], cmd['page'])
         post_exec = function (response) {
             response['year'] = cmd['year']
@@ -204,7 +214,6 @@ function cmd_handle_port(cmd, send_response) {
 
 chrome.runtime.onMessage.addListener(function (cmd, sender, send_response) {
     if (cmd['to'] !== 'background') {
-        log.trace(cmd)
         return false
     }
 
