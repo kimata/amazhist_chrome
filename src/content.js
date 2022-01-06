@@ -74,7 +74,7 @@ function order_list_page_parse() {
         const url = document.xpath(parent_xpath + '//a[contains(text(), "注文内容を表示")]')[0].href
 
         detail_page_list.push({
-            date: date,
+            date: date.replace('年', '/').replace('月', '/').replace('日', ''), // 雑だけど動く
             url: url
         })
     }

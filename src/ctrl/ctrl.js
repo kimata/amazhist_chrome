@@ -78,7 +78,7 @@ function getNewFileHandle() {
 
 function csv_escape(str) {
     if (typeof str === 'string') {
-        if (str.includes('"')) {
+        if (str.includes('"') || str.includes(',')) {
             return '"' + str.replace(/"/g, '""') + '"'
         } else {
             return str
