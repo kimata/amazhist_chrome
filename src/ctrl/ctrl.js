@@ -69,9 +69,9 @@ function getNewFileHandle() {
     const options = {
         types: [
             {
-                description: 'JSON Files',
+                description: 'CSV Files',
                 accept: {
-                    'text/json': ['.json']
+                    'text/csv': ['.csv']
                 }
             }
         ]
@@ -79,11 +79,59 @@ function getNewFileHandle() {
     return window.showSaveFilePicker(options)
 }
 
-async function write(data) {
+function csv_escape(str) {
+    if (typeof str === 'string') {
+        if (str.includes('"')) {
+            return '"' + str.replace(/"/g, '""') + '"'
+        } else {
+            return str
+        }
+    } else {
+        return str
+    }
+}
+
+function csv_convert(item_list) {
+    content_list = [
+        // NOTE: エンコーディングが UTF-8 固定になるので，Excel で開いたときの文字化け防止のため，
+        // 先頭に BOM をつける．
+        new TextDecoder('utf-8', { ignoreBOM: true }).decode(new Uint8Array([0xef, 0xbb, 0xbf]))
+    ]
+    console.log(content_list)
+    param_list = [
+        ['date', '購入日'],
+        ['name', '名前'],
+        ['quantity', '数量'],
+        ['price', '価格'],
+        ['seller', '販売元'],
+        ['asin', 'asin'],
+        ['url', 'URL'],
+        ['img_url', 'サムネイルURL']
+    ]
+    for (param of param_list) {
+        content_list.push(csv_escape(param[1]))
+        content_list.push(', ')
+    }
+    content_list.pop()
+    content_list.push('\n')
+
+    for (item of item_list) {
+        for (param of param_list) {
+            content_list.push(csv_escape(item[param[0]]))
+            content_list.push(',')
+        }
+        content_list.pop()
+        content_list.push('\n')
+    }
+    return content_list.join('')
+}
+
+async function write(item_list) {
     const handle = await getNewFileHandle()
 
     const writable = await handle.createWritable()
-    await writable.write(JSON.stringify(data))
+    await writable.write(csv_convert(item_list))
+    //    await writable.write(JSON.stringify(data))
     await writable.close()
 }
 
