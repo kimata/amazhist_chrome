@@ -203,7 +203,19 @@ function order_detail_page_parse() {
         }
     } catch (e) {
         print_stacktrace(e)
-        return e.message
+
+        var amazon_msg = ''
+        try {
+            amazon_msg = document
+            .xpath('//h4[contains(@class, "a-alert-heading")]')[0].innerText.trim()
+        } catch (e) {
+
+        }
+        if (amazon_msg != '') {
+            return '[amazon]' + amazon_msg
+        } else {
+            return e.message
+        }
     }
 }
 
