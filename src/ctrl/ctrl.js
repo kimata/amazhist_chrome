@@ -1,7 +1,6 @@
 var start_time = null
 var item_list = null
 var order_info = null
-var chart_order = null
 
 function state_init() {
     start_time = new Date()
@@ -60,9 +59,7 @@ function notify_progress() {
     } else {
         document.getElementById('remaining_time').innerText = '?'
     }
-    if (chart_order != null) {
-        chart_order.update()
-    }
+    chart_order_update()
 }
 
 function getNewFileHandle() {
@@ -181,7 +178,7 @@ function get_detail_in_order(order, index, mode, year, callback) {
                 item_list.push(item)
                 order_info['price_total'] += item['price']
                 order_info['by_year']['price'][year_index(year)] += item['price']
-                chart_order.update()
+                chart_order_update()
             }
             notify_progress()
             callback(response)
@@ -263,7 +260,7 @@ async function get_year_list() {
                 order_info['by_year']['count'] = new Array(order_info['year_list'].length).fill(0)
                 order_info['by_year']['price'] = new Array(order_info['year_list'].length).fill(0)
 
-                chart_order = chart_order_create(document.getElementById('chart_order'), order_info)
+                chart_order_create(order_info)
                 resolve(response['list'])
             }
         )

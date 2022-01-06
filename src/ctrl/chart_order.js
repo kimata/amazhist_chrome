@@ -1,5 +1,20 @@
-function chart_order_create(context, order_info) {
-    return new Chart(context, {
+var chart_order = null
+
+function chart_order_update() {
+    if (chart_order == null) {
+        return
+    }
+    chart_order.update()
+}
+
+function chart_order_create(order_info) {
+    ctrl_elem = document.getElementById('chart_ctrl')
+    ctrl_elem.onclick = function () {
+        chart_order_update()
+    }
+    ctrl_elem.style.display = 'block'
+
+    chart_order = new Chart(document.getElementById('chart_order'), {
         type: 'bar',
         data: {
             labels: order_info['year_list'].reverse().map((year) => {
@@ -7,16 +22,16 @@ function chart_order_create(context, order_info) {
             }),
             datasets: [
                 {
-                    label: '注文金額',
-                    yAxisID: 'price',
-                    data: order_info['by_year']['price'].reverse(),
-                    backgroundColor: '#fd7e14'
-                },
-                {
                     label: '注文件数',
                     yAxisID: 'count',
                     data: order_info['by_year']['count'].reverse(),
                     backgroundColor: '#ffc107'
+                },
+                {
+                    label: '注文金額',
+                    yAxisID: 'price',
+                    data: order_info['by_year']['price'].reverse(),
+                    backgroundColor: '#fd7e14'
                 }
             ]
         },
@@ -33,7 +48,7 @@ function chart_order_create(context, order_info) {
                         display: true
                     },
                     type: 'linear',
-                    position: 'right',
+                    position: 'left',
                     suggestedMin: 0,
                     suggestedMax: 10,
                     grid: {
@@ -51,12 +66,16 @@ function chart_order_create(context, order_info) {
                         display: true
                     },
                     type: 'linear',
-                    position: 'left',
+                    position: 'right',
                     suggestedMin: 0,
                     suggestedMax: 10000,
                     ticks: {
                         callback: function (value, index, values) {
-                            return value.toLocaleString() + '円'
+                            if (document.getElementById('chart_display_price').checked) {
+                                return value.toLocaleString() + '円'
+                            } else {
+                                return ''
+                            }
                         }
                     }
                 }
