@@ -177,6 +177,7 @@ function get_detail_in_order(order, index, mode, year, callback) {
                 return callback()
             }
             for (item of response['list']) {
+                item['date'] = response['date']
                 item_list.push(item)
                 order_info['price_total'] += item['price']
                 order_info['by_year']['price'][year_index(year)] += item['price']
