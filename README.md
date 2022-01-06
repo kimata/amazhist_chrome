@@ -7,9 +7,20 @@ amazhist_chrome は，Amazon の買い物履歴情報を集計する Chrome 拡�
 
 ## インストール
 
-1. Chrome の「拡張機能」タブでディベロッパーモードを有効化．
+### chrome ウェブストアから
 
-2. 「パッケージ化されていない拡張機能を読み込む」で，amazhist_chrom の **src ディレクトリ** を指定．
+下記のページの「Chromeに追加」ボタンをクリックするとインストールできます．
+
+[Amazhist Chrome Extension](https://chrome.google.com/webstore/detail/amazhist-chrome-extension/mfejdgdpblipdoileogibknihogejaja?hl=ja)
+
+
+### Github から
+
+1. Github からソース一式をダウンロード．
+
+2. Chrome の「拡張機能」タブでディベロッパーモードを有効化．
+
+3. 「パッケージ化されていない拡張機能を読み込む」で，amazhist_chrom の **src ディレクトリ** を指定．
 
 ![スクリーンショット](img/usage_1.png)
 
