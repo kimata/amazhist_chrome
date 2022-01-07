@@ -39,8 +39,3 @@ amazhist_chrome は，Amazon の買い物履歴情報を集計する Chrome 拡�
 
 - レジューム機能の追加．
   現時点だと，何らかの理由で動作が一旦停止すると途中から再開できません．
-
-- Background scripts からのコードの移動
-  Manifest V3 になると，ServiceWorker (V2 での Background scripts は 5分毎にリロードされるので，コードを移動する必要あり．
-
-  参考: [Issue 1152255: ServiceWorker is shut down every 5 minutes for manifest V3 extension](https://bugs.chromium.org/p/chromium/issues/detail?id=1152255)
