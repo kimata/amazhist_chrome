@@ -256,13 +256,10 @@ async function get_year_list() {
                 // response['list'] = [2002, 2001]
                 // response['list'] = [2005,2004,2003,2002,2001]
 
-                var target = document.getElementById('target').value
-
+                var target = parseInt(document.getElementById('target').value, 10)
                 year_list = response['list']
-                if (target == '1year') {
-                    year_list = year_list.slice(0, 1)
-                } else if (target == '2year') {
-                    year_list = year_list.slice(0, 2)
+                if (target != 0) {
+                    year_list = year_list.slice(0, target)
                 }
 
                 order_info['year_list'] = year_list
