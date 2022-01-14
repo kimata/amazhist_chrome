@@ -18,7 +18,19 @@
         <div class="container mt-2">
             <h2>履歴データ集計</h2>
             <p class="lead">Chrome で Amazon.co.jp にログインした状態でボタンを押すと購入履歴の集計が始まります．</p>
-            <button id="start" class="btn btn-primary">スタート</button>
+
+            <div class="row">
+                <div class="col-6">
+                    <select class="form-select" id="target">
+                        <option value="all" selected>全部</option>
+                        <option value="1year">1年分</option>
+                        <option value="2year">2年分</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <button id="start" class="btn btn-primary">スタート</button>
+                </div>
+            </div>
         </div>
 
         <div class="container mt-5">

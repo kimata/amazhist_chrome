@@ -255,13 +255,23 @@ async function get_year_list() {
                 // response['list'] = [2013, 2012, 2011, 2010, 2009, 2008, 2007]
                 // response['list'] = [2002, 2001]
                 // response['list'] = [2005,2004,2003,2002,2001]
-                order_info['year_list'] = response['list']
 
-                order_info['by_year']['count'] = new Array(order_info['year_list'].length).fill(0)
-                order_info['by_year']['price'] = new Array(order_info['year_list'].length).fill(0)
+                var target = document.getElementById('target').value
+
+                year_list = response['list']
+                if (target == '1year') {
+                    year_list = year_list.slice(0, 1)
+                } else if (target == '2year') {
+                    year_list = year_list.slice(0, 2)
+                }
+
+                order_info['year_list'] = year_list
+
+                order_info['by_year']['count'] = new Array(year_list.length).fill(0)
+                order_info['by_year']['price'] = new Array(year_list.length).fill(0)
 
                 chart_order_create(order_info)
-                resolve(response['list'])
+                resolve(year_list)
             }
         )
     })
