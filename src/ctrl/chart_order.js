@@ -85,9 +85,9 @@ function chart_order_create(order_info) {
                     callbacks: {
                         label: function (context) {
                             if (context.datasetIndex == 0) {
-                                return context.parsed.y.toLocaleString() + '円'
-                            } else {
                                 return context.parsed.y.toLocaleString() + '件'
+                            } else {
+                                return context.parsed.y.toLocaleString() + '円'
                             }
                         }
                     }
