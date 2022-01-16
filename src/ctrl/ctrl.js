@@ -304,7 +304,7 @@ async function get_year_list() {
             order_info['count_total'] = order_info['count_done']
             notify_progress()
 
-            worker_destroy();
+            worker_destroy()
 
             document.getElementById('start').disabled = false
         })

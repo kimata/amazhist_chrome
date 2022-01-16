@@ -44,7 +44,7 @@ function worker_init() {
 }
 
 function worker_destroy() {
-    tab_close('worker');
+    tab_close('worker')
 }
 
 function tab_open_impl(type, url, active, callback) {
@@ -72,10 +72,10 @@ function tab_open(type, url, active, callback) {
 
 function tab_close(type) {
     if (tab_id_map[type] == null) {
-        return;
+        return
     }
-    chrome.tabs.remove(tab_id_map[type]);
-    tab_id_map[type] = null;
+    chrome.tabs.remove(tab_id_map[type])
+    tab_id_map[type] = null
 }
 
 function hist_page_url(year, page) {

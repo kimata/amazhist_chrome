@@ -15,7 +15,7 @@ function chart_order_create(order_info) {
     ctrl_elem.style.display = 'block'
 
     if (chart_order != null) {
-        chart_order.destroy();
+        chart_order.destroy()
     }
 
     chart_order = new Chart(document.getElementById('chart_order'), {
