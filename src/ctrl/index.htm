@@ -17,29 +17,32 @@
 
         <div class="container">
             <h2>履歴データ集計</h2>
-            <p class="lead">Chrome で Amazon.co.jp にログインした状態でボタンを押すと購入履歴の集計が始まります．</p>
+            <div class="container">
+                <p class="small">
+                    Chrome で Amazon.co.jp にログインした状態でボタンを押すと購入履歴の集計が始まります．
+                </p>
 
-            <div class="row">
-                <div class="col-6">
-                    <select class="form-select" id="target">
-                        <option value="0" selected>全部</option>
-                        <option value="1">1年分</option>
-                        <option value="2">2年分</option>
-                        <option value="3">3年分</option>
-                    </select>
-                </div>
-                <div class="col-6">
-                    <button id="start" class="btn btn-primary">スタート</button>
+                <div class="row">
+                    <div class="col-6">
+                        <select class="form-select" id="target">
+                            <option value="0" selected>全部</option>
+                            <option value="1">1年分</option>
+                            <option value="2">2年分</option>
+                            <option value="3">3年分</option>
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <button id="start" class="btn btn-primary">スタート</button>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="container mt-5">
             <h2>ステータス</h2>
-
-            <div class="row">
-                <div class="col-sm-12 col-lg-6">
-                    <div class="container">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12 col-lg-6">
                         <div class="row">
                             <div class="col-sm-12 col-lg-6">
                                 処理済:
@@ -78,24 +81,26 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-sm-12 col-lg-6">
-                    <canvas id="chart_order"></canvas>
-                    <div id="chart_ctrl" style="display: none" class="float-end">
-                        <input type="checkbox" id="chart_display_price" checked="checked" />
-                        <label for="chart_display_price">価格を表示</label>
+                    <div class="col-sm-12 col-lg-6">
+                        <canvas id="chart_order"></canvas>
+                        <div id="chart_ctrl" style="display: none" class="float-end">
+                            <input type="checkbox" id="chart_display_price" checked="checked" />
+                            <label for="chart_display_price">価格を表示</label>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="container mt-5 mb-5">
+        <div class="container mt-3 mb-5">
             <h2>履歴データ保存</h2>
-            <p class="lead">
-                集計した履歴データを CSV
-                形式で保存します．集計途中やエラーが発生してもその時点までのデータを保存可能です．
-            </p>
-            <button id="save" class="btn btn-primary">保存</button>
+            <div class="container">
+                <p class="small">
+                    集計した履歴データを CSV 形式で保存します．
+                    集計途中やエラーが発生してもその時点までのデータを保存可能です．
+                </p>
+                <button id="save" class="btn btn-primary">保存</button>
+            </div>
         </div>
 
         <footer class="text-center text-lg-start bg-light text-muted fixed-bottom">
